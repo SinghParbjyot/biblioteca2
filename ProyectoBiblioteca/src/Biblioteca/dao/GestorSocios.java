@@ -6,13 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
+
 
 import Biblioteca.excepciones.BDException;
 import Biblioteca.excepciones.ExcepcionesLibro;
 import Biblioteca.modelo.Socio;
 import config.ConfigSQLLite;
-import entrada.Teclado;
+
 
 
 public class GestorSocios {

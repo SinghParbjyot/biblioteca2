@@ -14,6 +14,7 @@ import Biblioteca.modelo.Libro;
 import config.ConfigSQLLite;
 import entrada.Teclado;
 
+
 public class GestorLibros {
 
 	public static boolean estaLibro(int codigo) throws BDException, ExcepcionesLibro {
@@ -115,9 +116,10 @@ public class GestorLibros {
 				throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_ELIMINAR_LIBRO);
 			}
 			
-			if(GestorPrestamos.estaPrestamo(codigo, codSocio, fecha)) {
+			/*if(GestorPrestamos.estaPrestamo(codigo, codSocio, fecha)) {
 				throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_ELIMINAR_LIBRO_PRESTADO);
 			}
+			*/
 			conexion = ConfigSQLLite.abrirConexion();
 			String query = "DELETE FROM libro where codigo = ?";
 
