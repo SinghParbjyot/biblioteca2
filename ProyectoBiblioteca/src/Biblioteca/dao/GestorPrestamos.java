@@ -109,23 +109,20 @@ public class GestorPrestamos {
 	 * @throws BDException
 	 * @throws ExcepcionesLibro 
 	 */
-	public static boolean estaPrestamo(int codigoLibro,int codigoSocio,String fechaInicio) throws BDException, ExcepcionesLibro {
+	public static boolean estaPrestamo(int codigoLibro) throws BDException, ExcepcionesLibro {
 		PreparedStatement ps = null;
 		Connection conexion = null;
 		try {
 			// Conexi�n a la bd
 			conexion = ConfigSQLLite.abrirConexion();
-			String query = "Select * from prestamo where  codigo_libro=? and codigo_socio=? and fecha_inicio=?";
+			String query = "Select * from prestamo where  codigo_libro=?";
 			ps = conexion.prepareStatement(query);
 			ps.setInt(1, codigoLibro);
-			ps.setInt(2, codigoSocio);
-			ps.setString(3, fechaInicio);
+			
 			ResultSet resultados = ps.executeQuery();
 			while (resultados.next()) {
 				int codLibro = resultados.getInt("codigo_libro");
-				int codSocio = resultados.getInt("codigo_socio");
-				String fecha_inicio = resultados.getString("fecha_inicio");
-				if(codLibro == codigoLibro && codSocio == codigoSocio && fechaInicio.equalsIgnoreCase(fecha_inicio)) {
+				if(codLibro == codigoLibro ) {
 					return true;
 				}
 				
@@ -160,7 +157,7 @@ public class GestorPrestamos {
 			try {
 				// Conexi�n a la bd
 				
-				if(!estaPrestamo(codigoLibro,codigoSocio,fechaInicio)) {
+				if(!estaPrestamo(codigoLibro)) {
 					throw new Exception("Ya existe");
 				}
 				conexion = ConfigSQLLite.abrirConexion();

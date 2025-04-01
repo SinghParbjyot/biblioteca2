@@ -115,7 +115,7 @@ public class GestorLibros {
 				throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_ELIMINAR_LIBRO);
 			}
 			
-			if(GestorPrestamos.estaPrestamo(codigo, codSocio, fecha)) {
+			if(GestorPrestamos.estaPrestamo(codigo)) {
 				throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_ELIMINAR_LIBRO_PRESTADO);
 			}
 			conexion = ConfigSQLLite.abrirConexion();
