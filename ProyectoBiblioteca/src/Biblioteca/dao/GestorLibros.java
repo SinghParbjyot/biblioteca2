@@ -210,5 +210,80 @@ public class GestorLibros {
 
 		return listaLibros;
 	}
+	
+	public static List<Libro> librosNoPrestados() throws ExcepcionesLibro, BDException{
+		List<Libro> listaLibros = new ArrayList<Libro>();
+		PreparedStatement ps = null;
+		Connection conexion = null;
+
+		try {
+			// Conexión a la bd
+			conexion = ConfigSQLLite.abrirConexion();
+			String query = "SELECT * FROM libro where codigo not in(select codigo_libro from prestamo)";
+			ps = conexion.prepareStatement(query);
+			ResultSet resultados = ps.executeQuery();
+
+			while (resultados.next()) {
+				Libro libro = new Libro(resultados.getInt("codigo"),resultados.getString("isbn"),
+						resultados.getString("titulo"), resultados.getString("escritor"),resultados.getInt("año_publicacion"),resultados.getDouble("puntuacion"));
+				listaLibros.add(libro);
+			}
+
+		} catch (SQLException e) {
+			throw new BDException(BDException.ERROR_QUERY + e.getMessage());
+		}
+
+		finally {
+			ConfigSQLLite.cerrarConexion(conexion);
+		}
+		
+		return listaLibros;
+	}
+	
+	public static List<Libro> librosDevueltosFecha(String fechaDevolucion) throws ExcepcionesLibro, BDException{
+		List<Libro> listaLibros = new ArrayList<Libro>();
+		
+		PreparedStatement ps = null;
+		Connection conexion = null;
+
+		try {
+			// Conexión a la bd
+			conexion = ConfigSQLLite.abrirConexion();
+			String query = "SELECT l.*,fecha_devolucion FROM libro l join prestamo p on(l.codigo = p.codigo_libro) where fecha_devolucion = ?";
+			ps = conexion.prepareStatement(query);
+			
+			ps.setString(1, fechaDevolucion);
+			ResultSet resultados = ps.executeQuery();
+
+			while (resultados.next()) {
+				Libro libro = new Libro(resultados.getInt("codigo"),resultados.getString("isbn"),
+						resultados.getString("titulo"), resultados.getString("escritor"),resultados.getInt("año_publicacion"),resultados.getDouble("puntuacion"));
+				listaLibros.add(libro);
+			}
+
+		} catch (SQLException e) {
+			throw new BDException(BDException.ERROR_QUERY + e.getMessage());
+		}
+
+		finally {
+			ConfigSQLLite.cerrarConexion(conexion);
+		}
+		
+		return listaLibros;
+	}
+	
+	public static void main(String[] args) throws ExcepcionesLibro, BDException {
+		
+		String fechaDevolucion = Teclado.leerCadena("Introduce la fecha de devolucion(YYYY-MM-DD): ");
+		
+		List<Libro> lista = librosDevueltosFecha(fechaDevolucion);
+		
+		for(Libro libro : lista) {
+			System.out.println(libro);
+		}
+			
+		
+		
+	}
 
 }
