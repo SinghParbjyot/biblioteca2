@@ -64,7 +64,7 @@ public class PrincipalLibro {
 					libros = GestorLibros.consultarLibros();
 
 					if (libros.size() == 0) {
-						System.out.println("No se ha encontrado ningún libro en la base de datos.");
+						throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_CONSULTAR_LIBROS);
 					} else {
 						for (Libro libro : libros) {
 							System.out.println(libro.toString());
@@ -80,7 +80,7 @@ public class PrincipalLibro {
 					libros = GestorLibros.consultarLibroPorEscritorOrdenadosPorPuntuacion();
 
 					if(libros.size() == 0) {
-						System.out.println("No exise ningún libro con ese escritor en la base de datos.");
+						throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_CONSULTAR_LIBRO_ESCRITOR);
 					}else {
 						for (Libro libro : libros) {
 							System.out.println(libro.toString());
@@ -92,10 +92,38 @@ public class PrincipalLibro {
 				}
 				break;
 			case 5:
-				
+				try {
+					libros = GestorLibros.librosNoPrestados();
+
+					if(libros.size() == 0) {
+						throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_LIBROS_NOPRESTADOS);
+					}else {
+						for (Libro libro : libros) {
+							System.out.println(libro.toString());
+						}
+						System.out.println("Se han consultado " + libros.size() + " departamentos de la base de datos.");
+					}
+				}catch (BDException e) {
+					System.out.println(e.getMessage());
+				}
 				break;
 			case 6:
+				try {
+					
+					String fechaDevolucion = Teclado.leerCadena("Introduce la fecha de devolucion(YYYY-MM-DD): ");
+					libros = GestorLibros.librosDevueltosFecha(fechaDevolucion);
 
+					if(libros.size() == 0) {
+						throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_LIBROS_NODEVUELTOS);
+					}else {
+						for (Libro libro : libros) {
+							System.out.println(libro.toString());
+						}
+						System.out.println("Se han consultado " + libros.size() + " departamentos de la base de datos.");
+					}
+				}catch (BDException e) {
+					System.out.println(e.getMessage());
+				}
 				break;
 
 			default:
