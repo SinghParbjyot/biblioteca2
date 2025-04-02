@@ -42,7 +42,7 @@ public class PrincipalPrestamo {
 	                    Libro l = new Libro(codigoLibro);
 	                    Socio s = new Socio(codigoSocio);
 	                    Prestamo prestamo = new Prestamo(l, s, fechaInicio, fechaFin, fechaDevolucion);
-	                    
+	                     
 	                    GestorPrestamos.insertarPrestamo(prestamo);
 	                    System.out.println("Préstamo insertado correctamente.");
 	                    break;
