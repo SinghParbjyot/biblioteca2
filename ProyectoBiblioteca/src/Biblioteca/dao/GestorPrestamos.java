@@ -10,6 +10,7 @@ import java.util.List;
 
 import Biblioteca.excepciones.BDException;
 import Biblioteca.excepciones.ExcepcionesLibro;
+import Biblioteca.excepciones.ExcepcionesPrestamo;
 import Biblioteca.modelo.Libro;
 import Biblioteca.modelo.Prestamo;
 import Biblioteca.modelo.Socio;
@@ -27,165 +28,117 @@ public class GestorPrestamos {
 	 * @return 
 	 * @throws BDException
 	 * @throws ExcepcionesLibro 
+	 * @throws ExcepcionesPrestamo 
 	 */
-	public static boolean insertarPrestamo(Prestamo prestamo) throws BDException, ExcepcionesLibro {
-		
-		  Connection conexion = null;
-		int filas = 0;
-		try {
-			// Conexi�n a la bd
-			conexion = ConfigSQLLite.abrirConexion();
-			String query = "INSERT INTO prestamo VALUES (?, ?, ?, ? ,?)";
-			PreparedStatement ps = conexion.prepareStatement(query);
-			int codigoLibro = prestamo.getLibro().getCodigo();
-			int codigoSocio = prestamo.getLibro().getCodigo();
-			String fechaInicio = prestamo.getFechaInicio();
-			String fechaFin = prestamo.getFechaFin();
-			String fechaDevolucion = prestamo.getFechaDevolucion();
-			ps.setInt(1,codigoLibro );
-			ps.setInt(2, codigoSocio);
-			ps.setString(3, fechaInicio);
-			ps.setString(4, fechaFin);
-			ps.setString(5, fechaDevolucion);
-			filas = ps.executeUpdate();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			throw new BDException(BDException.ERROR_QUERY + e.getMessage());
-		} finally {
-			if (conexion != null) {
-				ConfigSQLLite.cerrarConexion(conexion);
-			}
-		}
-		return filas > 0;
-		 
+	public static void insertarPrestamo(Prestamo prestamo) throws BDException, ExcepcionesLibro, ExcepcionesPrestamo {
+	    Connection conexion = null;
+	    int filas = 0;
+	    try {
+	        conexion = ConfigSQLLite.abrirConexion();
+	        String query = "INSERT INTO prestamo VALUES (?, ?, ?, ?, ?)";
+	        PreparedStatement ps = conexion.prepareStatement(query);
+	        
+	        int codigoLibro = prestamo.getLibro().getCodigo();
+	        int codigoSocio = prestamo.getSocio().getCodigo();
+	        String fechaInicio = prestamo.getFechaInicio();
+	        String fechaFin = prestamo.getFechaFin();
+	        String fechaDevolucion = prestamo.getFechaDevolucion();
+	        
+	        ps.setInt(1, codigoLibro);
+	        ps.setInt(2, codigoSocio);
+	        ps.setString(3, fechaInicio);
+	        ps.setString(4, fechaFin);
+	        ps.setString(5, fechaDevolucion);
+	        
+	        filas = ps.executeUpdate();
+	        if (filas == 0) {
+	            throw new ExcepcionesPrestamo(ExcepcionesPrestamo.MENSAJE_INSERTAR_PRESTAMO);
+	        }
+	    } catch (SQLException e) {
+	        throw new ExcepcionesPrestamo(ExcepcionesPrestamo.MENSAJE_INSERTAR_PRESTAMO + ": " + e.getMessage());
+	    } finally {
+	        if (conexion != null) {
+	            ConfigSQLLite.cerrarConexion(conexion);
+	        }
+	    }
+	  
 	}
-	
-	/**
-	 *  Actualizar un préstamo, por datos identificativos, de la base de datos.
-		Leerá por teclado el código de libro, el código de socio, la fecha de inicio y la nueva fecha de
-		devolución del préstamo a actualizar. 
-	 * @param codigoLibro
-	 * @param codigoSocio
-	 * @param fechaInicio
-	 * @param fechaDevolucion
-	 * @return
-	 * @throws BDException
-	 * @throws ExcepcionesLibro 
-	 */
-	public static boolean actualizarPrestamo(int codigoLibro,int codigoSocio,String fechaInicio,String fechaDevolucion) throws BDException, ExcepcionesLibro {
-		
-		 Connection conexion = null;
-		int filas = 0;
-		try {
-			// Conexi�n a la bd
-			conexion = ConfigSQLLite.abrirConexion();
-			String query = "UPDATE prestamo set fecha_devolucion = ? where codigo_libro= ? and codigo_socio=? and fecha_inicio= ? ";
-			PreparedStatement ps = conexion.prepareStatement(query);
-		
-			ps.setString(1, fechaDevolucion);
-			ps.setInt(2,codigoLibro );
-			ps.setInt(3, codigoSocio);
-			ps.setString(4, fechaInicio);
-			filas = ps.executeUpdate();
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			throw new BDException(BDException.ERROR_QUERY + e.getMessage());
-		} finally {
-			if (conexion != null) {
-				ConfigSQLLite.cerrarConexion(conexion);
-			}
-		}
-		return filas > 0;
-	}
-	
-	
-	/**
-	 * Este metodo nos indica si exite o no un prestamo en nuestra base de datos
-	 * @param codigoLibro
-	 * @param codigoSocio
-	 * @param fechaInicio
-	 * @return
-	 * @throws BDException
-	 * @throws ExcepcionesLibro 
-	 */
-	public static boolean estaPrestamo(int codigoLibro) throws BDException, ExcepcionesLibro {
-		PreparedStatement ps = null;
-		Connection conexion = null;
-		try {
-			// Conexi�n a la bd
-			conexion = ConfigSQLLite.abrirConexion();
-			String query = "Select * from prestamo where  codigo_libro=?";
-			ps = conexion.prepareStatement(query);
-			ps.setInt(1, codigoLibro);
-			
-			ResultSet resultados = ps.executeQuery();
-			while (resultados.next()) {
-				int codLibro = resultados.getInt("codigo_libro");
-				if(codLibro == codigoLibro ) {
-					return true;
-				}
-				
-			}
 
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			throw new BDException(BDException.ERROR_QUERY + e.getMessage());
-		} finally {
-			if (conexion != null) {
-				ConfigSQLLite.cerrarConexion(conexion);
-			}
-		}
-		return false;
+	public static void actualizarPrestamo(int codigoLibro, int codigoSocio, String fechaInicio, String fechaDevolucion) throws BDException, ExcepcionesPrestamo, ExcepcionesLibro {
+	    Connection conexion = null;
+	    int filas = 0;
+	    try {
+	        conexion = ConfigSQLLite.abrirConexion();
+	        String query = "UPDATE prestamo SET fecha_devolucion = ? WHERE codigo_libro = ? AND codigo_socio = ? AND fecha_inicio = ?";
+	        PreparedStatement ps = conexion.prepareStatement(query);
+	        
+	        ps.setString(1, fechaDevolucion);
+	        ps.setInt(2, codigoLibro);
+	        ps.setInt(3, codigoSocio);
+	        ps.setString(4, fechaInicio);
+	        
+	        filas = ps.executeUpdate();
+	        if (filas == 0) {
+	            throw new ExcepcionesPrestamo(ExcepcionesPrestamo.MENSAJE_EXISTE_PRESTAMO);
+	        }
+	    } catch (SQLException e) {
+	        throw new BDException(BDException.ERROR_QUERY + e.getMessage());
+	    } finally {
+	        if (conexion != null) {
+	            ConfigSQLLite.cerrarConexion(conexion);
+	        }
+	    }
+	 
 	}
-	
-	/**
-	 * Elimina un préstamo, por datos identificativos, de la base de datos.
-	   Leerá por teclado el código de libro, el código de socio y la fecha de inicio del préstamo a eliminar.
-	   Se conectará a la base de datos biblioteca, creada en SQLite, ejecutará una sentencia SQL de
-	   eliminación para borrar un préstamo, por datos identificativos, de la base de datos y cerrará la
-	   conexión
-	 * @param codigoLibro
-	 * @param codigoSocio
-	 * @param fechaInicio
-	 * @return
-	 * @throws Exception
-	 */
-	public static boolean eliminarPrestamo(int codigoLibro,int codigoSocio,String fechaInicio) throws Exception {
-		 Connection conexion = null;
-			int filas = 0;
-			try {
-				// Conexi�n a la bd
-				
-				if(!estaPrestamo(codigoLibro)) {
-					throw new Exception("Ya existe");
-				}
-				conexion = ConfigSQLLite.abrirConexion();
-				String query = "Delete from prestamo where codigo_libro=? and codigo_socio=? and fecha_inicio=? ";
-				PreparedStatement ps = conexion.prepareStatement(query);
-				ps.setInt(1,codigoLibro );
-				ps.setInt(2, codigoSocio);
-				ps.setString(3, fechaInicio);
-				filas = ps.executeUpdate();
-				
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				throw new BDException(BDException.ERROR_QUERY + e.getMessage());
-			} finally {
-				if (conexion != null) {
-					ConfigSQLLite.cerrarConexion(conexion);
-				}
-			}
-			return filas > 0;
+
+	public static boolean estaPrestamo(int codigoLibro) throws BDException, ExcepcionesLibro {
+	    Connection conexion = null;
+	    try {
+	        conexion = ConfigSQLLite.abrirConexion();
+	        String query = "SELECT * FROM prestamo WHERE codigo_libro = ?";
+	        PreparedStatement ps = conexion.prepareStatement(query);
+	        ps.setInt(1, codigoLibro);
+	        
+	        ResultSet resultados = ps.executeQuery();
+	        return resultados.next(); // Devuelve true si hay resultados
+	    } catch (SQLException e) {
+	        throw new BDException(BDException.ERROR_QUERY + e.getMessage());
+	    } finally {
+	        if (conexion != null) {
+	            ConfigSQLLite.cerrarConexion(conexion);
+	        }
+	    }
 	}
-	
-	
-	/**
-	 * Consultar todos los préstamos de la base de datos
-	 * @return
-	 * @throws BDException
-	 * @throws ExcepcionesLibro 
-	 */
+
+	public static boolean eliminarPrestamo(int codigoLibro, int codigoSocio, String fechaInicio) throws BDException, ExcepcionesPrestamo, ExcepcionesLibro {
+	    Connection conexion = null;
+	    int filas = 0;
+	    try {
+	        if (!estaPrestamo(codigoLibro)) {
+	            throw new ExcepcionesPrestamo(ExcepcionesPrestamo.MENSAJE_NO_EXISTE_PRESTAMO);
+	        }
+	        
+	        conexion = ConfigSQLLite.abrirConexion();
+	        String query = "DELETE FROM prestamo WHERE codigo_libro = ? AND codigo_socio = ? AND fecha_inicio = ?";
+	        PreparedStatement ps = conexion.prepareStatement(query);
+	        ps.setInt(1, codigoLibro);
+	        ps.setInt(2, codigoSocio);
+	        ps.setString(3, fechaInicio);
+	        
+	        filas = ps.executeUpdate();
+	        if (filas == 0) {
+	            throw new ExcepcionesLibro(ExcepcionesPrestamo.MENSAJE_EXISTE_PRESTAMO);
+	        }
+	    } catch (SQLException e) {
+	        throw new BDException(BDException.ERROR_QUERY + e.getMessage());
+	    } finally {
+	        if (conexion != null) {
+	            ConfigSQLLite.cerrarConexion(conexion);
+	        }
+	    }
+	    return filas > 0;
+	}
+
 	public static List<Prestamo> consultaPrestamos() throws BDException, ExcepcionesLibro {
 	    List<Prestamo> prestamos = new ArrayList<>();
 	    Connection conexion = null;

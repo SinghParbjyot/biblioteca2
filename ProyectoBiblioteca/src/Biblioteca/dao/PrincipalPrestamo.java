@@ -25,137 +25,93 @@ public class PrincipalPrestamo {
 		return opcion;
 	}
 
-	public static void main(String[] args) throws ExcepcionesLibro {
+	public static void main(String[] args)  {
 
-		int opcion;
-		do {
-			opcion = escribirMenuOpciones();
-			switch (opcion) {
-			case 1:
-				int codigoLibro = Teclado.leerEntero("Introduzca el codigo de libro:");
-
-				int codigoSocio = Teclado.leerEntero("Introduzca su codigo de socio:");
-
-				String fechaInicio = Teclado.leerCadena("Introduzca la fecha de inicio:");
-
-				String fechaFin = Teclado.leerCadena("Introduzca la fecha de fin :");
-				String fechaDevolucion = Teclado.leerCadena("Introduzca la fecha de devolucion :");
-				Libro l = new Libro(codigoLibro);
-				Socio s = new Socio(codigoSocio);
-				Prestamo prestamo = new Prestamo(l, s, fechaInicio, fechaFin,fechaDevolucion);
-				System.out.println(prestamo);
-				try {
-					boolean insertado =	GestorPrestamos.insertarPrestamo(prestamo);
-					if(insertado) {
-						System.out.println("Se ha insertado");
-					}else {
-						System.out.println("No se ha insertado");
-					}
-				} catch (BDException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				break;
-			case 2:
-				codigoLibro = Teclado.leerEntero("Introduzca el codigo de libro:");
-
-				codigoSocio = Teclado.leerEntero("Introduzca su codigo de socio:");
-
-				fechaInicio = Teclado.leerCadena("Introduzca la fecha de inicio:");
-
-				fechaDevolucion = Teclado.leerCadena("Introduzca la fecha de fin :");
-				try {
-					boolean actualizar = GestorPrestamos.actualizarPrestamo(codigoLibro,codigoSocio,fechaInicio,fechaDevolucion);
-					if(actualizar) {
-						System.out.println("Se ha actualizado");
-					}else {
-						System.out.println("No se ha actualizado");
-					}
-				} catch (BDException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				break;
-			case 3:
-
-				codigoLibro = Teclado.leerEntero("Introduzca el codigo de libro:");
-
-				codigoSocio = Teclado.leerEntero("Introduzca su codigo de socio:");
-
-				fechaInicio = Teclado.leerCadena("Introduzca la fecha de inicio:");
-				try {
-					boolean eliminar = GestorPrestamos.eliminarPrestamo(codigoLibro, codigoSocio, fechaInicio);
-					if(eliminar) {
-						System.out.println("Se ha eliminado");
-					}else {
-						System.out.println("No se ha eliminado");
-					}
-				} catch (BDException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				break;
-			case 4:
-				try {
-					ArrayList<Prestamo> prestamos = (ArrayList<Prestamo>) GestorPrestamos.consultaPrestamos();
-					if(prestamos.size() == 0) {
-						System.out.println("No hay prestamos");
-					}else {
-						
-						for(Prestamo p : prestamos) {
-							System.out.println(p);
-						}
-						
-					}
-				} catch (BDException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				break;
-
-			case 5:
-				try {
-					ArrayList<Prestamo> prestamos = (ArrayList<Prestamo>) GestorPrestamos.consultarPrestamosNoDevueltos();
-					if(prestamos.size() == 0) {
-						System.out.println("No hay prestamos sin devolucion");
-					}else {
-						for(Prestamo p : prestamos) {
-							System.out.println(p);
-						}
-					}
-				} catch (BDException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				break;
-			case 6:
-				fechaInicio = Teclado.leerCadena("Introduzca la fecha de inicio:");
-				try {
-					ArrayList<Prestamo> prestamos = (ArrayList<Prestamo>) GestorPrestamos.consultarPrestamosFechaDevolucion(fechaInicio);
-					if(prestamos.size() == 0) {
-						System.out.println("No hay prestamos con dicha fecha de  inicio");
-					}else {
-						for(Prestamo p : prestamos) {
-							System.out.println(p.toString2());
-						}
-					}
-				} catch (BDException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				break;
-
-			default:
-				System.out.println("Opción inválida. Intente de nuevo.");
-			}
-		} while (opcion != 0);
-
-		System.out.println("Programa finalizado sin errores.");
-
+		int opcion = -1;
+	    do {
+	        try {
+	            opcion = escribirMenuOpciones();
+	            switch (opcion) {
+	                case 1:
+	                    int codigoLibro = Teclado.leerEntero("Introduzca el codigo de libro:");
+	                    int codigoSocio = Teclado.leerEntero("Introduzca su codigo de socio:");
+	                    String fechaInicio = Teclado.leerCadena("Introduzca la fecha de inicio:");
+	                    String fechaFin = Teclado.leerCadena("Introduzca la fecha de fin:");
+	                    String fechaDevolucion = Teclado.leerCadena("Introduzca la fecha de devolucion:");
+	                    
+	                    Libro l = new Libro(codigoLibro);
+	                    Socio s = new Socio(codigoSocio);
+	                    Prestamo prestamo = new Prestamo(l, s, fechaInicio, fechaFin, fechaDevolucion);
+	                    
+	                    GestorPrestamos.insertarPrestamo(prestamo);
+	                    System.out.println("Préstamo insertado correctamente.");
+	                    break;
+	                
+	                case 2:
+	                    codigoLibro = Teclado.leerEntero("Introduzca el codigo de libro:");
+	                    codigoSocio = Teclado.leerEntero("Introduzca su codigo de socio:");
+	                    fechaInicio = Teclado.leerCadena("Introduzca la fecha de inicio:");
+	                    fechaDevolucion = Teclado.leerCadena("Introduzca la nueva fecha de devolucion:");
+	                    
+	                    GestorPrestamos.actualizarPrestamo(codigoLibro, codigoSocio, fechaInicio, fechaDevolucion);
+	                    System.out.println("Préstamo actualizado correctamente.");
+	                    break;
+	                
+	                case 3:
+	                    codigoLibro = Teclado.leerEntero("Introduzca el codigo de libro:");
+	                    codigoSocio = Teclado.leerEntero("Introduzca su codigo de socio:");
+	                    fechaInicio = Teclado.leerCadena("Introduzca la fecha de inicio:");
+	                    
+	                    GestorPrestamos.eliminarPrestamo(codigoLibro, codigoSocio, fechaInicio);
+	                    System.out.println("Préstamo eliminado correctamente.");
+	                    break;
+	                
+	                case 4:
+	                    ArrayList<Prestamo> prestamos = (ArrayList<Prestamo>) GestorPrestamos.consultaPrestamos();
+	                    if (prestamos.isEmpty()) {
+	                        System.out.println("No hay préstamos registrados.");
+	                    } else {
+	                        for (Prestamo p : prestamos) {
+	                            System.out.println(p);
+	                        }
+	                    }
+	                    break;
+	                
+	                case 5:
+	                    prestamos = (ArrayList<Prestamo>) GestorPrestamos.consultarPrestamosNoDevueltos();
+	                    if (prestamos.isEmpty()) {
+	                        System.out.println("No hay préstamos sin devolución.");
+	                    } else {
+	                        for (Prestamo p : prestamos) {
+	                            System.out.println(p);
+	                        }
+	                    }
+	                    break;
+	                
+	                case 6:
+	                    fechaInicio = Teclado.leerCadena("Introduzca la fecha de inicio:");
+	                    prestamos = (ArrayList<Prestamo>) GestorPrestamos.consultarPrestamosFechaDevolucion(fechaInicio);
+	                    if (prestamos.isEmpty()) {
+	                        System.out.println("No hay préstamos con esa fecha de inicio.");
+	                    } else {
+	                        for (Prestamo p : prestamos) {
+	                            System.out.println(p.toString2());
+	                        }
+	                    }
+	                    break;
+	                
+	                default:
+	                    System.out.println("Opción inválida. Intente de nuevo.");
+	            }
+	        } catch (BDException e) {
+	            System.err.println("Error de base de datos: " + e.getMessage());
+	        } catch (ExcepcionesLibro e) {
+	            System.err.println("Error con el libro: " + e.getMessage());
+	        } catch (Exception e) {
+	            System.err.println("Ocurrió un error inesperado: " + e.getMessage());
+	        }
+	    } while (opcion != 0);
+	    
+	
 	}
 }
