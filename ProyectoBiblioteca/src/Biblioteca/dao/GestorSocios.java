@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 
 import Biblioteca.excepciones.BDException;
+import Biblioteca.excepciones.ExcepcionesLibro;
 import Biblioteca.excepciones.ExcepcionesSocio;
 import Biblioteca.modelo.Socio;
 import config.ConfigSQLLite;
@@ -17,7 +18,7 @@ import config.ConfigSQLLite;
 
 public class GestorSocios {
 	
-	public static boolean validarCodigo(int cod) throws Biblioteca.excepciones.BDException, Biblioteca.excepciones.ExcepcionesLibro{
+	public static boolean validarCodigo(int cod) throws Biblioteca.excepciones.BDException, ExcepcionesLibro{
 		PreparedStatement ps = null;
 	    Connection conexion = null;
 	    boolean existe =false;
@@ -116,13 +117,10 @@ public class GestorSocios {
 
 			// Conexi�n a la bd
 			
-			if(!validarCodigo(socio.getCodigo())) {
-				throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_ELIMINAR_SOCIO);
-			}
 			
 			if(GestorPrestamos.estaPrestamo(socio.getCodigo())) {
 
-				throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_ELIMINAR_LIBRO_PRESTADO);
+				throw new ExcepcionesLibro(ExcepcionesSocio.ERROR_CONSULTAR_SOCIOS_PRESTADOS);
 			}
 			
 
@@ -156,7 +154,7 @@ public class GestorSocios {
 
 	}
 
-	public static ArrayList<Socio> consultarSocios() throws BDException, ExcepcionesLibro {
+	public static ArrayList<Socio> consultarSocios() throws BDException, ExcepcionesLibro{
 		
 		ArrayList<Socio> listaSocios = new ArrayList<Socio>();
 		PreparedStatement ps = null;
