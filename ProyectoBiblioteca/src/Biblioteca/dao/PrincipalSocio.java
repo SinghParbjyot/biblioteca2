@@ -10,10 +10,11 @@ import Biblioteca.excepciones.ExcepcionesLibro;
 
 public class PrincipalSocio {
 	
-	public static void main(String[] args) throws BDException, ExcepcionesLibro {
+	public static void main(String[] args) {
 		ArrayList<Socio> socios = null;
-		int opcion;
+		int opcion = 0;
 		do {
+			try {
 			System.out.println("0. Salir del programa.");
 			System.out.println("1. Insertar un socio en la base de datos.");
 			System.out.println("2. Eliminar un socio, por código, de la base de datos. ");
@@ -152,6 +153,12 @@ public class PrincipalSocio {
 
 			default:
 				System.out.println("Opcion no valida.");
+			}
+			
+			} catch(BDException e) {
+				System.err.println("Ocurrió un error inesperado: " + e.getMessage());
+			} catch(ExcepcionesLibro l) {
+				System.err.println("Ocurrió un error inesperado: " + l.getMessage());
 			}
 		} while (opcion != 0);
 	}

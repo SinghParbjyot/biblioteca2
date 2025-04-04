@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 
 import Biblioteca.excepciones.BDException;
-import Biblioteca.excepciones.ExcepcionesLibro;
+import Biblioteca.excepciones.ExcepcionesSocio;
 import Biblioteca.modelo.Socio;
 import config.ConfigSQLLite;
 
@@ -38,6 +38,10 @@ public class GestorSocios {
 	        
 	       while(resultados.next()) {
 	    	   int codigo = resultados.getInt("codigo");
+	    	   
+	    	   if(codigo == cod) {
+	    		   existe = true;
+	    	   }
 	       }
 	     
 
@@ -111,6 +115,16 @@ public class GestorSocios {
 		try {
 
 			// Conexi�n a la bd
+			
+			if(!validarCodigo(socio.getCodigo())) {
+				throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_ELIMINAR_SOCIO);
+			}
+			
+			if(GestorPrestamos.estaPrestamo(socio.getCodigo())) {
+
+				throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_ELIMINAR_LIBRO_PRESTADO);
+			}
+			
 
 			conexion = ConfigSQLLite.abrirConexion();
 
@@ -218,7 +232,7 @@ public class GestorSocios {
 			// Conexión a la bd
 			conexion = ConfigSQLLite.abrirConexion();
 			
-			String query = "SELECT * FROM socio join prestamo on (socio.codigo = prestamo.codigo_socio) where prestamo.codigo_socio = null";
+			String query = "SELECT * FROM socio where codigo not in (select codigo_socio from prestamo)";
 			Statement sentencia = conexion.createStatement();
 			ResultSet resultados = sentencia.executeQuery(query);
 
@@ -250,14 +264,14 @@ public class GestorSocios {
 			conexion = ConfigSQLLite.abrirConexion();
 			
 			String query = "SELECT * FROM socio join prestamo on (socio.codigo = prestamo.codigo_socio) where fecha_inicio = ? ";
-			Statement sentencia = conexion.createStatement();
-			PreparedStatement pss = conexion.prepareStatement(query);
+			ps = conexion.prepareStatement(query);
+			
 			
 			ps.setString(1, fecha_inicio);
 
 			
 			
-			ResultSet resultados = sentencia.executeQuery(query);
+			ResultSet resultados = ps.executeQuery();
 
 			while (resultados.next()) {
 				Biblioteca.modelo.Socio socio = new Biblioteca.modelo.Socio(resultados.getInt("codigo"),resultados.getString("dni"),
