@@ -8,10 +8,7 @@ public class ExcepcionesLibro extends Exception {
 	public static final String ERROR_CONSULTAR_LIBRO_ESCRITOR = "No existe ningún libro con ese escritor en la base de datos.";
 	public static final String ERROR_LIBROS_NOPRESTADOS = "Todos los libros de la base de datos estan prestados.";
 	public static final String ERROR_LIBROS_NODEVUELTOS = "No existe ningún libro devuelto en esa fecha en la base de datos.";
-	public static final String ERROR_ABRIR_CONEXION = "Error al abrir conexion ";
-	public static final String ERROR_QUERY = "Error en la consulta ";
-	public static final String ERROR_CERRAR_CONEXION = "Error al cerrar conexion ";
-	public static final String ERROR_CARGAR_DRIVER = "Error al cargar driver";
+	
 	
 	public ExcepcionesLibro(String mensaje) {
 		super("Error: " + mensaje);
