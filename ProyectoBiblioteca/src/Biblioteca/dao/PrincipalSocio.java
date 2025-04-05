@@ -7,10 +7,11 @@ import Biblioteca.modelo.Socio;
 import entrada.Teclado;
 import Biblioteca.excepciones.BDException;
 import Biblioteca.excepciones.ExcepcionesLibro;
+import Biblioteca.excepciones.ExcepcionesSocio;
 
 public class PrincipalSocio {
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ExcepcionesLibro {
 		ArrayList<Socio> socios = null;
 		int opcion = 0;
 		do {
@@ -88,7 +89,7 @@ public class PrincipalSocio {
 								.println("Se han consultado " + socios.size() + " socios en la base de datos.");
 					}
 				} catch (BDException e) {
-					throw new BDException(BDException.ERROR_QUERY + e.getMessage());
+					System.out.println("Error inesperado");
 				}
 				break;
 			case 4:
@@ -107,7 +108,7 @@ public class PrincipalSocio {
 								.println("Se han consultado " + socios.size() + " socios en la base de datos.");
 					}
 				} catch (BDException e) {
-					throw new BDException(BDException.ERROR_QUERY + e.getMessage());
+					System.out.println("Error inesperado");
 				}
 				break;
 			case 5:
@@ -125,7 +126,7 @@ public class PrincipalSocio {
 							.println("Se han consultado " + socios.size() + " socios en la base de datos.");
 				}
 			} catch (BDException e) {
-				throw new BDException(BDException.ERROR_QUERY + e.getMessage());
+				System.out.println("Error inesperado");
 			}
 			
 				break;
@@ -145,7 +146,7 @@ public class PrincipalSocio {
 								.println("Se han consultado " + socios.size() + " socios en la base de datos.");
 					}
 				} catch (BDException e) {
-					throw new BDException(BDException.ERROR_QUERY + e.getMessage());
+					System.out.println("Error inesperado");
 				}
 				
 

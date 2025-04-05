@@ -18,7 +18,7 @@ import config.ConfigSQLLite;
 
 public class GestorSocios {
 	
-	public static boolean validarCodigo(int cod) throws Biblioteca.excepciones.BDException, ExcepcionesLibro{
+	public static boolean validarCodigo(int cod) throws BDException{
 		PreparedStatement ps = null;
 	    Connection conexion = null;
 	    boolean existe =false;
@@ -56,7 +56,7 @@ public class GestorSocios {
 	    return existe;  
 	    
 	}
-	public static boolean insertarSocio(Socio socio) throws BDException, ExcepcionesLibro {
+	public static boolean insertarSocio(Socio socio) throws BDException{
 
 		Connection conexion = null;
 
@@ -154,7 +154,7 @@ public class GestorSocios {
 
 	}
 
-	public static ArrayList<Socio> consultarSocios() throws BDException, ExcepcionesLibro{
+	public static ArrayList<Socio> consultarSocios() throws BDException{
 		
 		ArrayList<Socio> listaSocios = new ArrayList<Socio>();
 		PreparedStatement ps = null;
@@ -185,7 +185,7 @@ public class GestorSocios {
 
 	}
 
-	public static ArrayList<Socio> consultarSocioPorLocalidadOrdenadosPorNombre(String domicilio) throws BDException, ExcepcionesLibro {
+	public static ArrayList<Socio> consultarSocioPorLocalidadOrdenadosPorNombre(String domicilio) throws BDException{
 		ArrayList<Socio> listaSocios = new ArrayList<Socio>();
 		PreparedStatement ps = null ;
 		Connection conexion = null;
@@ -221,7 +221,7 @@ public class GestorSocios {
 		return listaSocios;
 	}
 	
-	public static ArrayList<Socio> consultarSocioSinPrestamo() throws BDException, ExcepcionesLibro {
+	public static ArrayList<Socio> consultarSocioSinPrestamo() throws BDException{
 		ArrayList<Socio> listaSocios = new ArrayList<Socio>();
 		PreparedStatement ps = null;
 		Connection conexion = null;
@@ -251,7 +251,7 @@ public class GestorSocios {
 		return listaSocios;
 	}
 	
-	public static ArrayList<Socio> consultarSocioConPrestamosPorFecha(String fecha_inicio) throws BDException, ExcepcionesLibro {
+	public static ArrayList<Socio> consultarSocioConPrestamosPorFecha(String fecha_inicio) throws BDException {
 		ArrayList<Socio> listaSocios = new ArrayList<Socio>();
 		PreparedStatement ps = null;
 		Connection conexion = null;
