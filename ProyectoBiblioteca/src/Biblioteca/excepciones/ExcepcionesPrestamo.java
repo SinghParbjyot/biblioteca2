@@ -6,7 +6,7 @@ public class ExcepcionesPrestamo extends Exception{
 	public static final String MENSAJE_NO_EXISTE_PRESTAMO = "No se ha encontrado ningún préstamo en la base de datos.";
 	
 	public ExcepcionesPrestamo(String mensaje) {
-		super("Error"+mensaje);
+		super("Error "+mensaje);
 	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
