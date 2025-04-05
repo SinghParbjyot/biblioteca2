@@ -1,12 +1,48 @@
 package Biblioteca.dao;
 
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import Biblioteca.excepciones.BDException;
 import Biblioteca.excepciones.ExcepcionesLibro;
 import Biblioteca.modelo.Libro;
+import config.ConfigSQLLite;
 import entrada.Teclado;
 
 public class Principal {
+	public static List<Libro> librosPrestados() throws ExcepcionesLibro, BDException{
+		List<Libro> listaLibros = new ArrayList<Libro>();
+		PreparedStatement ps = null;
+		Connection conexion = null;
 
+		try {
+			// Conexión a la bd
+			conexion = ConfigSQLLite.abrirConexion();
+			String query = "SELECT count(*) FROM libro where codigo  in(select codigo_libro from prestamo)";
+			ps = conexion.prepareStatement(query);
+			ResultSet resultados = ps.executeQuery();
+
+			while (resultados.next()) {
+				Libro libro = new Libro(resultados.getInt("codigo"),resultados.getString("isbn"),
+						resultados.getString("titulo"), resultados.getString("escritor"),resultados.getInt("año_publicacion"),resultados.getDouble("puntuacion"));
+				listaLibros.add(libro);
+			}
+
+		} catch (SQLException e) {
+			throw new BDException(BDException.ERROR_QUERY + e.getMessage());
+		}
+
+		finally {
+			ConfigSQLLite.cerrarConexion(conexion);
+		}
+		
+		return listaLibros;
+	}
 	public static void main(String[] args) {
 		int opcion;
 		

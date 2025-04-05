@@ -23,6 +23,8 @@ public class PrincipalLibro {
 			System.out.println("5. Consultar los libros no prestados de la base de datos. ");
 			System.out.println("6. Consultar los libros devueltos, en una fecha, de la base de datos. ");
 			opcion = Teclado.leerEntero("Seleccione una opcion:");
+			
+			
 			switch(opcion) {
 			case 0:
 				System.out.println("Saliendo del programa...");

@@ -17,7 +17,7 @@ import config.ConfigSQLLite;
 
 public class GestorSocios {
 	
-	public static boolean validarCodigo(int cod) throws Biblioteca.excepciones.BDException, Biblioteca.excepciones.ExcepcionesLibro{
+	public static boolean validarCodigo(int cod) throws BDException{
 		PreparedStatement ps = null;
 	    Connection conexion = null;
 	    boolean existe =false;
@@ -51,7 +51,7 @@ public class GestorSocios {
 	    return existe;  
 	    
 	}
-	public static boolean insertarSocio(Socio socio) throws BDException, ExcepcionesLibro {
+	public static boolean insertarSocio(Socio socio) throws BDException {
 
 		Connection conexion = null;
 

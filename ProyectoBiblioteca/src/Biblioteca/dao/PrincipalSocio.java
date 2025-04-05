@@ -2,7 +2,7 @@ package Biblioteca.dao;
 
 import java.util.ArrayList;
 
-import Biblioteca.dao.GestorSocios;
+
 import Biblioteca.modelo.Socio;
 import entrada.Teclado;
 import Biblioteca.excepciones.BDException;
