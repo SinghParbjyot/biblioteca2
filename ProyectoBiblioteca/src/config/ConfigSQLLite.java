@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import org.sqlite.SQLiteConfig;
 
 import Biblioteca.excepciones.BDException;
-import Biblioteca.excepciones.ExcepcionesLibro;
+
 
 public class ConfigSQLLite {
 
@@ -22,7 +22,7 @@ public class ConfigSQLLite {
 	 * @return
 	 * @throws BDException
 	 */
-	public static Connection abrirConexion() throws Biblioteca.excepciones.ExcepcionesLibro {
+	public static Connection abrirConexion() throws BDException {
 		Connection conexion = null;
 
 		try {
@@ -35,10 +35,10 @@ public class ConfigSQLLite {
 
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
-			throw new Biblioteca.excepciones.ExcepcionesLibro(Biblioteca.excepciones.ExcepcionesLibro.ERROR_CARGAR_DRIVER + e.getMessage());
+			throw new BDException(BDException.ERROR_CARGAR_DRIVER + e.getMessage());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			throw new Biblioteca.excepciones.ExcepcionesLibro(Biblioteca.excepciones.ExcepcionesLibro.ERROR_ABRIR_CONEXION + e.getMessage());
+			throw new BDException(BDException.ERROR_ABRIR_CONEXION + e.getMessage());
 		}
 
 		return conexion;
@@ -50,11 +50,11 @@ public class ConfigSQLLite {
 	 * @param conexion
 	 * @throws BDException 
 	 */
-	public static void cerrarConexion(Connection conexion) throws Biblioteca.excepciones.ExcepcionesLibro {
+	public static void cerrarConexion(Connection conexion) throws Biblioteca.excepciones.BDException{
 		try {
 			conexion.close();
 		} catch (SQLException e) {
-			throw new Biblioteca.excepciones.ExcepcionesLibro(Biblioteca.excepciones.ExcepcionesLibro.ERROR_CERRAR_CONEXION + e.getMessage() );
+			throw new BDException(BDException.ERROR_CERRAR_CONEXION + e.getMessage() );
 		}
 	}
 
