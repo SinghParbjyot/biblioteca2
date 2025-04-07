@@ -15,37 +15,11 @@ import config.ConfigSQLLite;
 import entrada.Teclado;
 
 public class Principal {
-	public static List<Libro> librosPrestados() throws ExcepcionesLibro, BDException{
-		List<Libro> listaLibros = new ArrayList<Libro>();
-		PreparedStatement ps = null;
-		Connection conexion = null;
 
-		try {
-			// Conexión a la bd
-			conexion = ConfigSQLLite.abrirConexion();
-			String query = "SELECT count(*) FROM libro where codigo  in(select codigo_libro from prestamo)";
-			ps = conexion.prepareStatement(query);
-			ResultSet resultados = ps.executeQuery();
-
-			while (resultados.next()) {
-				Libro libro = new Libro(resultados.getInt("codigo"),resultados.getString("isbn"),
-						resultados.getString("titulo"), resultados.getString("escritor"),resultados.getInt("año_publicacion"),resultados.getDouble("puntuacion"));
-				listaLibros.add(libro);
-			}
-
-		} catch (SQLException e) {
-			throw new BDException(BDException.ERROR_QUERY + e.getMessage());
-		}
-
-		finally {
-			ConfigSQLLite.cerrarConexion(conexion);
-		}
-		
-		return listaLibros;
-	}
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ExcepcionesLibro {
+		List<Libro> libros;
 		int opcion;
-		
+
 		do {
 			System.out.println("0. Salir del programa.");
 			System.out.println("1. Consultar el libro o los libros que ha/n sido prestado/s menos veces (y que como mínimo haya/n sido prestado/s una vez). ");
@@ -60,22 +34,48 @@ public class Principal {
 				System.out.println("Saliendo del programa...");
 				break;
 			case 1:
-				
+				try {
+					libros = GestorLibros.consultarLibroMenosPrestado();
+
+					if (libros.size() == 0) {
+						throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_CONSULTAR_LIBROS);
+					} else {
+						for (Libro libro : libros) {
+							System.out.println(libro.toString());
+						}
+						System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
+					}
+				} catch (BDException e) {
+					System.out.println(e.getMessage());
+				}
 				break;
 			case 2:
-				
-				break;
-			case 3:
 
 				break;
+			case 3:
+				try {
+					libros = GestorLibros.consultarLibrosPrestadosInferiorMedia();
+
+					if (libros.size() == 0) {
+						throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_CONSULTAR_LIBROS);
+					} else {
+						for (Libro libro : libros) {
+							System.out.println(libro.toString());
+						}
+						System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
+					}
+				} catch (BDException e) {
+					System.out.println(e.getMessage());
+				}
+				break;
 			case 4:
-				
+
 				break;
 			case 5:
-				
+
 				break;
 			case 6:
-				
+
 				break;
 
 			default:

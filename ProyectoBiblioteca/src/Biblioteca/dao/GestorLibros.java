@@ -230,19 +230,81 @@ public class GestorLibros {
 
 		return listaLibros;
 	}
+	
+	public static List<Libro> consultarLibroMenosPrestado() throws ExcepcionesLibro, BDException{
+		List<Libro> listaLibros = new ArrayList<Libro>();
+		PreparedStatement ps = null;
+		Connection conexion = null;
 
-	public static void main(String[] args) throws ExcepcionesLibro, BDException {
+		try {
+			// Conexión a la bd
+			conexion = ConfigSQLLite.abrirConexion();
+			String query = "SELECT l.*, COUNT(p.codigo_libro) AS veces_prestado\r\n"
+					+ "FROM libro l\r\n"
+					+ "JOIN prestamo p ON l.codigo = p.codigo_libro\r\n"
+					+ "GROUP BY l.codigo, l.isbn, l.titulo, l.escritor, l.\"año_publicacion\", l.puntuacion\r\n"
+					+ "HAVING veces_prestado = (\r\n"
+					+ "    SELECT MIN(cantidad) FROM (\r\n"
+					+ "        SELECT COUNT(p2.codigo_libro) AS cantidad\r\n"
+					+ "        FROM prestamo p2\r\n"
+					+ "        GROUP BY p2.codigo_libro\r\n"
+					+ "    )\r\n"
+					+ ");";
+			ps = conexion.prepareStatement(query);
+			ResultSet resultados = ps.executeQuery();
 
-		String fechaDevolucion = Teclado.leerCadena("Introduce la fecha de devolucion(YYYY-MM-DD): ");
+			while (resultados.next()) {
+				Libro libro = new Libro(resultados.getInt("codigo"),resultados.getString("isbn"),
+						resultados.getString("titulo"), resultados.getString("escritor"),resultados.getInt("año_publicacion"),resultados.getDouble("puntuacion"));
+				listaLibros.add(libro);
+			}
 
-		List<Libro> lista = librosDevueltosFecha(fechaDevolucion);
-
-		for(Libro libro : lista) {
-			System.out.println(libro);
+		} catch (SQLException e) {
+			throw new BDException(BDException.ERROR_QUERY + e.getMessage());
 		}
 
+		finally {
+			ConfigSQLLite.cerrarConexion(conexion);
+		}
 
+		return listaLibros;
+	}
+	
+	public static List<Libro> consultarLibrosPrestadosInferiorMedia() throws ExcepcionesLibro, BDException{
+		List<Libro> listaLibros = new ArrayList<Libro>();
+		PreparedStatement ps = null;
+		Connection conexion = null;
 
+		try {
+			// Conexión a la bd
+			conexion = ConfigSQLLite.abrirConexion();
+			String query = "SELECT l.*, COUNT(p.codigo_libro) AS veces_prestado\r\n"
+					+ "FROM libro l\r\n"
+					+ "JOIN prestamo p ON l.codigo = p.codigo_libro\r\n"
+					+ "GROUP BY l.codigo, l.isbn, l.titulo, l.escritor, l.\"año_publicacion\", l.puntuacion\r\n"
+					+ "HAVING veces_prestado > ("
+					+ "    SELECT AVG(cantidad) FROM ("
+					+ "        SELECT COUNT(p2.codigo_libro) AS cantidad"
+					+ "        FROM prestamo p2"
+					+ "        GROUP BY p2.codigo_libro));";
+			ps = conexion.prepareStatement(query);
+			ResultSet resultados = ps.executeQuery();
+
+			while (resultados.next()) {
+				Libro libro = new Libro(resultados.getInt("codigo"),resultados.getString("isbn"),
+						resultados.getString("titulo"), resultados.getString("escritor"),resultados.getInt("año_publicacion"),resultados.getDouble("puntuacion"));
+				listaLibros.add(libro);
+			}
+
+		} catch (SQLException e) {
+			throw new BDException(BDException.ERROR_QUERY + e.getMessage());
+		}
+
+		finally {
+			ConfigSQLLite.cerrarConexion(conexion);
+		}
+
+		return listaLibros;
 	}
 
 }
