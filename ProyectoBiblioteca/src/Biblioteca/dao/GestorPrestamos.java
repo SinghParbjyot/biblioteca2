@@ -322,8 +322,79 @@ public class GestorPrestamos {
 		}
 		return prestamos;
 	}
+	
+	public static List<Prestamo> consultarLibrosNumeroPrestamosOrdenadoDescendente() throws BDException {
+	    List<Prestamo> prestamos = new ArrayList<>();
+	    Connection conexion = null;
+	    
+	    try {
+	        conexion = ConfigSQLLite.abrirConexion();
+	        String query = "SELECT l.ISBN, l.titulo, COUNT(*) AS numero_prestamos " +
+	                       "FROM libro l JOIN prestamo p ON l.codigo = p.codigo_libro " +
+	                       "GROUP BY l.ISBN, l.titulo ORDER BY numero_prestamos DESC";
 
+	        PreparedStatement ps = conexion.prepareStatement(query);
+	        ResultSet resultados = ps.executeQuery();
 
+	        while (resultados.next()) {
+	            Libro libro = new Libro(resultados.getString("ISBN"), resultados.getString("titulo"));
+	            int numeroPrestamos = (resultados.getInt("numero_prestamos")); 
+	            Prestamo prestamo = new Prestamo(libro, null, numeroPrestamos); 
+	            prestamos.add(prestamo);
+	        }
+
+	    } catch (SQLException e) {
+	        throw new BDException("Error al consultar libros con más préstamos: " + e.getMessage());
+	    } finally {
+	        ConfigSQLLite.cerrarConexion(conexion);
+	    }
+
+	    return prestamos;
+	}
+
+	
+	public static List<Prestamo> consultarSociosNumeroPrestamosOrdenadoDescendente() throws BDException {
+	    List<Prestamo> prestamos = new ArrayList<>();
+	    Connection conexion = null;
+
+	    try {
+	        conexion = ConfigSQLLite.abrirConexion();
+
+	       
+	        String query = "SELECT s.dni, s.nombre, COUNT(*) AS numero_prestamos " +
+	                       "FROM socio s JOIN prestamo p ON (s.codigo = p.codigo_socio) " +
+	                       "GROUP BY s.dni, s.nombre ORDER BY numero_prestamos DESC";
+
+	        PreparedStatement ps = conexion.prepareStatement(query);
+	        ResultSet resultados = ps.executeQuery();
+
+	        while (resultados.next()) {
+	           
+	            Socio socio = new Socio(resultados.getString("dni"), resultados.getString("nombre"));
+
+	          
+	            int numeroPrestamos = resultados.getInt("numero_prestamos");
+
+	           
+	            Prestamo prestamo = new Prestamo(null, socio, numeroPrestamos);
+
+	            
+	            prestamos.add(prestamo);
+	        }
+
+	    } catch (SQLException e) {
+	        throw new BDException("Error en la consulta de socios: " + e.getMessage());
+	    } finally {
+	        if (conexion != null) {
+	            ConfigSQLLite.cerrarConexion(conexion);
+	        }
+	    }
+
+	    return prestamos;
+	}
+
+	
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 

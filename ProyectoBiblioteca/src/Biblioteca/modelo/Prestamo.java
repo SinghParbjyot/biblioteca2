@@ -6,7 +6,8 @@ public class Prestamo {
 	private String fechaInicio;
 	private String fechaFin;
 	private String fechaDevolucion;
-	private static int contador = 0;
+	private static int contador = 1;
+	private int numeroPrestamo;
 	public Prestamo(Libro libro, Socio socio, String fechaInicio, String fechaFin,String fechaDevolucion) {
 		super();
 		this.libro = libro;
@@ -24,7 +25,11 @@ public class Prestamo {
 		this.libro = libro;
 		this.socio = socio;
 	}
-	
+	public Prestamo(Libro libro ,Socio socio,int numeroPrestamos) {
+		this.libro = libro;
+		this.socio = socio;
+		this.numeroPrestamo = numeroPrestamos;
+	}
 
 	@Override
 	public String toString() {
@@ -37,7 +42,16 @@ public class Prestamo {
 		
 		return "("+(contador++)+")"+"Nombre="+socio.getNombre()+",DNI="+socio.getDni()+",Titulo="+libro.getTitulo()+",ISBN="+libro.getIsbn()+",fechaDevolucion="+this.fechaDevolucion+"\n";
 	}
-
+	
+	public String toString3() {
+		
+		return "("+(contador++)+")"+"Titulo="+libro.getTitulo()+",ISBN="+libro.getIsbn()+", Numero_Prestamo="+this.numeroPrestamo;
+	}
+	public String toString4() {
+        return "(" + (contador++) + ") Nombre=" + socio.getNombre() + 
+               ", DNI=" + socio.getDni() + ", Numero_Prestamo=" + this.numeroPrestamo;
+    }
+	
 	public Libro getLibro() {
 		return libro;
 	}

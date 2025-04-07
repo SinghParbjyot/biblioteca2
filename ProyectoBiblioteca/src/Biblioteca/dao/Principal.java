@@ -11,6 +11,7 @@ import java.util.List;
 import Biblioteca.excepciones.BDException;
 import Biblioteca.excepciones.ExcepcionesLibro;
 import Biblioteca.modelo.Libro;
+import Biblioteca.modelo.Prestamo;
 import config.ConfigSQLLite;
 import entrada.Teclado;
 
@@ -72,9 +73,27 @@ public class Principal {
 
 				break;
 			case 5:
+				try {
+					List<Prestamo> prestamos = GestorPrestamos.consultarLibrosNumeroPrestamosOrdenadoDescendente();
 
+					for (Prestamo p : prestamos) {
+						System.out.println(p);
+					}
+				} catch (BDException e) {
+					System.err.println("Error: " + e.getMessage());
+				}
 				break;
 			case 6:
+				try {
+					List<Prestamo> prestamos = GestorPrestamos.consultarSociosNumeroPrestamosOrdenadoDescendente();
+
+					// Mostrar los préstamos usando toString4
+					for (Prestamo p : prestamos) {
+						System.out.println(p.toString4());
+					}
+				} catch (BDException e) {
+					System.err.println("Error: " + e.getMessage());
+				}
 
 				break;
 
