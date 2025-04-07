@@ -20,16 +20,25 @@ public class Libro {
 		this.puntuacion = puntuacion;
 	}
 
+	public Libro(String isbn, String titulo, String escritor, int añoPublicacion, double puntuacion) {
+		super();
+		this.isbn = isbn;
+		this.titulo = titulo;
+		this.escritor = escritor;
+		this.añoPublicacion = añoPublicacion;
+		this.puntuacion = puntuacion;
+	}
+
 	public Libro(int codigo) {
 		this.codigo = codigo;
 	}
-	
+
 	public Libro(String isbn, String titulo) {
 		this.isbn = isbn;
 		this.titulo = titulo;
 	}
-	
-	
+
+
 
 	public int getCodigo() {
 		return codigo;
