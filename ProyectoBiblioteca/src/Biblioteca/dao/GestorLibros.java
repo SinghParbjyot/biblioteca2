@@ -17,38 +17,6 @@ import entrada.Teclado;
 
 public class GestorLibros {
 
-	public static boolean estaLibro(int codigo) throws BDException, ExcepcionesLibro {
-		PreparedStatement ps = null;
-		Connection conexion = null;
-
-		try {
-			conexion = ConfigSQLLite.abrirConexion();
-			String query = "SELECT * FROM libro where codigo = ?";
-
-			ps = conexion.prepareStatement(query);
-			ps.setInt(1, codigo);
-			ResultSet resultados = ps.executeQuery();
-
-			while(resultados.next()) {
-				int cod = resultados.getInt("codigo");
-
-				if(cod == codigo) {
-					return true;
-				}
-			}
-		} catch (SQLException e) {
-			throw new BDException(BDException.ERROR_QUERY + e.getMessage());
-		}
-
-		finally {
-			ConfigSQLLite.cerrarConexion(conexion);
-		}
-
-
-		return false;
-
-	}
-
 	public static boolean insertarLibro(Libro libro) throws BDException, ExcepcionesLibro {
 
 		Connection conexion = null;
@@ -61,33 +29,31 @@ public class GestorLibros {
 
 			conexion = ConfigSQLLite.abrirConexion();
 
-			if(estaLibro(libro.getCodigo())) {
-				throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_INSERTAR_LIBRO);
-			}
-
-			String query = "INSERT INTO libro VALUES (?, ?, ?, ?, ?, ?)";
+			String query = "INSERT INTO libro(isbn,titulo,escritor,año_publicacion,puntuacion) VALUES (?, ?, ?, ?, ?)";
 
 			PreparedStatement ps = conexion.prepareStatement(query);
 
-			ps.setInt(1, libro.getCodigo());
+			ps.setString(1, libro.getIsbn());
 
-			ps.setString(2, libro.getIsbn());
+			ps.setString(2, libro.getTitulo()); 
 
-			ps.setString(3, libro.getTitulo()); 
+			ps.setString(3, libro.getEscritor());
 
-			ps.setString(4, libro.getEscritor());
+			ps.setInt(4,libro.getAñoPublicacion());
 
-			ps.setInt(5,libro.getAñoPublicacion());
-
-			ps.setDouble(6, libro.getPuntuacion());
+			ps.setDouble(5, libro.getPuntuacion());
 
 			filas = ps.executeUpdate();
+
+			if(filas == 0) {
+				throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_INSERTAR_LIBRO);
+			}
 
 		} catch (SQLException e) {
 
 			// TODO Auto-generated catch block
 
-			throw new BDException(BDException.ERROR_QUERY + e.getMessage());
+			throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_INSERTAR_LIBRO);
 
 		} finally {
 
@@ -111,30 +77,24 @@ public class GestorLibros {
 
 		try {
 
-			
-			if(!estaLibro(codigo)) {
-				throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_ELIMINAR_LIBRO);
-			}
-			
 			if(GestorPrestamos.estaPrestamo(codigo)) {
 
 				throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_ELIMINAR_LIBRO_PRESTADO);
 			}
+
+				conexion = ConfigSQLLite.abrirConexion();
+				String query = "DELETE FROM libro where codigo = ?";
+
+				PreparedStatement ps = conexion.prepareStatement(query);
+
+				ps.setInt(1, codigo);
+				filas = ps.executeUpdate();
 			
-			conexion = ConfigSQLLite.abrirConexion();
-			String query = "DELETE FROM libro where codigo = ?";
-
-			PreparedStatement ps = conexion.prepareStatement(query);
-
-			ps.setInt(1, codigo);
-
-			filas = ps.executeUpdate();
-			
+			if(filas == 0) {
+				throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_ELIMINAR_LIBRO);
+			}
 
 		} catch (SQLException e) {
-
-			// TODO Auto-generated catch block
-
 			throw new BDException(BDException.ERROR_QUERY + e.getMessage());
 
 		} finally {
@@ -210,7 +170,7 @@ public class GestorLibros {
 
 		return listaLibros;
 	}
-	
+
 	public static List<Libro> librosNoPrestados() throws ExcepcionesLibro, BDException{
 		List<Libro> listaLibros = new ArrayList<Libro>();
 		PreparedStatement ps = null;
@@ -236,22 +196,21 @@ public class GestorLibros {
 		finally {
 			ConfigSQLLite.cerrarConexion(conexion);
 		}
-		
+
 		return listaLibros;
 	}
-	
+
 	public static List<Libro> librosDevueltosFecha(String fechaDevolucion) throws ExcepcionesLibro, BDException{
 		List<Libro> listaLibros = new ArrayList<Libro>();
-		
+
 		PreparedStatement ps = null;
 		Connection conexion = null;
 
 		try {
-			// Conexión a la bd
 			conexion = ConfigSQLLite.abrirConexion();
 			String query = "SELECT l.*,fecha_devolucion FROM libro l join prestamo p on(l.codigo = p.codigo_libro) where fecha_devolucion = ?";
 			ps = conexion.prepareStatement(query);
-			
+
 			ps.setString(1, fechaDevolucion);
 			ResultSet resultados = ps.executeQuery();
 
@@ -268,22 +227,22 @@ public class GestorLibros {
 		finally {
 			ConfigSQLLite.cerrarConexion(conexion);
 		}
-		
+
 		return listaLibros;
 	}
-	
+
 	public static void main(String[] args) throws ExcepcionesLibro, BDException {
-		
+
 		String fechaDevolucion = Teclado.leerCadena("Introduce la fecha de devolucion(YYYY-MM-DD): ");
-		
+
 		List<Libro> lista = librosDevueltosFecha(fechaDevolucion);
-		
+
 		for(Libro libro : lista) {
 			System.out.println(libro);
 		}
-			
-		
-		
+
+
+
 	}
 
 }
