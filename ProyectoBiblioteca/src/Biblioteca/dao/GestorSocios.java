@@ -276,5 +276,92 @@ public class GestorSocios {
 		return listaSocios;
 	}
 
+	public static ArrayList<Socio> consultarSocioConMasPrestamosSuperiorMedia() throws BDException {
+		ArrayList<Socio> listaSocios = new ArrayList<Socio>();
+		PreparedStatement ps = null;
+		Connection conexion = null;
+		int filas = 0;
+
+		try {
+			// Conexión a la bd
+			conexion = ConfigSQLLite.abrirConexion();
+			
+			String query = "SELECT s.codigo, s.nombre, COUNT(p.codigo_socio) AS total_prestamos"
+					+ "FROM socio "
+					+ "JOIN prestamo p ON s.codigo = p.codigo_socio"
+					+ "GROUP BY s.codigo, s.nombre"
+					+ "HAVING COUNT(p.codigo_socio) > ("
+					+ "    SELECT AVG(prestamos_por_socio)"
+					+ "    FROM ("
+					+ "        SELECT COUNT(codigo_socio) AS prestamos_por_socio"
+					+ "        FROM prestamo"
+					+ "        GROUP BY codigo_socio"
+					+ "    )"
+					+ "); ";
+			
+			
+			Statement sentencia = conexion.createStatement();
+			ResultSet resultados = sentencia.executeQuery(query);
+
+			while (resultados.next()) {
+				Socio socio = new Socio(resultados.getInt("codigo"),resultados.getString("dni"),
+						resultados.getString("nombre"), resultados.getString("domicilio"),resultados.getString("telefono"),resultados.getString("correo"));
+				listaSocios.add(socio);
+			}
+
+		} catch (SQLException e) {
+			
+		}
+
+		finally {
+			ConfigSQLLite.cerrarConexion(conexion);
+		}
+
+		return listaSocios;
+	}
+	
+	public static ArrayList<Socio> consultarSocioConMasPrestamos() throws BDException {
+		ArrayList<Socio> listaSocios = new ArrayList<Socio>();
+		PreparedStatement ps = null;
+		Connection conexion = null;
+		int filas = 0;
+
+		try {
+			// Conexión a la bd
+			conexion = ConfigSQLLite.abrirConexion();
+			
+			String query = "SELECT s.codigo, s.nombre, COUNT(p.codigo_socio) AS total_prestamos"
+					+ "FROM socio s"
+					+ "JOIN prestamo p ON s.codigo = p.codigo_socio"
+					+ "GROUP BY s.codigo, s.nombre"
+					+ "HAVING COUNT(p.codigo_socio) = ("
+					+ "    SELECT COUNT(codigo_socio) AS max_prestamos"
+					+ "    FROM prestamo"
+					+ "    GROUP BY codigo_socio"
+					+ "    ORDER BY max_prestamos DESC"
+					+ "    LIMIT 1"
+					+ ")"
+					+ "ORDER BY total_préstamos DESC; ";
+			
+			
+			Statement sentencia = conexion.createStatement();
+			ResultSet resultados = sentencia.executeQuery(query);
+
+			while (resultados.next()) {
+				Socio socio = new Socio(resultados.getInt("codigo"),resultados.getString("dni"),
+						resultados.getString("nombre"), resultados.getString("domicilio"),resultados.getString("telefono"),resultados.getString("correo"));
+				listaSocios.add(socio);
+			}
+
+		} catch (SQLException e) {
+			
+		}
+
+		finally {
+			ConfigSQLLite.cerrarConexion(conexion);
+		}
+
+		return listaSocios;
+	}
 
 }
