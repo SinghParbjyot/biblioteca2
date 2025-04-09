@@ -10,7 +10,9 @@ import java.util.List;
 
 import Biblioteca.excepciones.BDException;
 import Biblioteca.excepciones.ExcepcionesLibro;
+import Biblioteca.excepciones.ExcepcionesSocio;
 import Biblioteca.modelo.Libro;
+import Biblioteca.modelo.Socio;
 import Biblioteca.modelo.Prestamo;
 import config.ConfigSQLLite;
 import entrada.Teclado;
@@ -51,8 +53,27 @@ public class Principal {
 				}
 				break;
 			case 2:
-
+				
+				try {
+					ArrayList<Socio> socios = GestorSocios.consultarSocioConMasPrestamos();
+					
+					if(socios.size() == 0) {
+						System.out.println("No hay socios prestados");
+					} else {
+						for(Socio socio : socios) {
+							System.out.println(socio.toString());
+						}
+						System.out.println("Se han consultado " +socios.size() + "socios de la base de datos.");
+					}
+				} catch (BDException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 				break;
+				
+
+				
 			case 3:
 				try {
 					libros = GestorLibros.consultarLibrosPrestadosInferiorMedia();
@@ -70,8 +91,27 @@ public class Principal {
 				}
 				break;
 			case 4:
-
+				
+				try {
+					ArrayList<Socio> socios = GestorSocios.consultarSocioConMasPrestamosSuperiorMedia();
+					
+					if(socios.size() == 0) {
+						System.out.println("No hay socios prestados");
+					} else {
+						for(Socio socio : socios) {
+							System.out.println(socio.toString());
+						}
+						System.out.println("Se han consultado " +socios.size() + "socios de la base de datos.");
+					}
+				} catch (BDException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 				break;
+				
+
+				
 			case 5:
 				try {
 					List<Prestamo> prestamos = GestorPrestamos.consultarLibrosNumeroPrestamosOrdenadoDescendente();
