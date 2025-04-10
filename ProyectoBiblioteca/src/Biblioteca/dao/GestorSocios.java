@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import Biblioteca.excepciones.BDException;
 import Biblioteca.excepciones.ExcepcionesLibro;
+import Biblioteca.excepciones.ExcepcionesSocio;
 import Biblioteca.modelo.Socio;
 import config.ConfigSQLLite;
 
@@ -102,7 +103,7 @@ public class GestorSocios {
 
 	}
 
-	public static boolean eliminarSocio(Socio socio) throws BDException, ExcepcionesLibro {
+	public static boolean eliminarSocio(int codigo) throws BDException, ExcepcionesSocio {
 
 		Connection conexion = null;
 
@@ -110,22 +111,24 @@ public class GestorSocios {
 
 		try {
 
-			// Conexi�n a la bd
+			if(estaPrestamo(codigo)) {
 
-			conexion = ConfigSQLLite.abrirConexion();
+				throw new ExcepcionesSocio(ExcepcionesSocio.ERROR_CONSULTAR_SOCIOS_PRESTADOS);
+			}
 
-			String query = "DELETE FROM socio where codigo = ?";
+				conexion = ConfigSQLLite.abrirConexion();
+				String query = "DELETE FROM socio where codigo = ?";
 
-			PreparedStatement ps = conexion.prepareStatement(query);
+				PreparedStatement ps = conexion.prepareStatement(query);
 
-			ps.setInt(1, socio.getCodigo());
-
-			filas = ps.executeUpdate();
+				ps.setInt(1, codigo);
+				filas = ps.executeUpdate();
+			
+			if(filas == 0) {
+				throw new ExcepcionesSocio(ExcepcionesSocio.ERROR_ELIMINAR_);
+			}
 
 		} catch (SQLException e) {
-
-			// TODO Auto-generated catch block
-
 			throw new BDException(BDException.ERROR_QUERY + e.getMessage());
 
 		} finally {
@@ -362,6 +365,26 @@ public class GestorSocios {
 		}
 
 		return listaSocios;
+	}
+	
+	public static boolean estaPrestamo(int codigoSocio) throws BDException {
+		Connection conexion = null;
+		try {
+			conexion = ConfigSQLLite.abrirConexion();
+			String query = "SELECT * FROM prestamo WHERE codigo_socio = ? and fecha_devolucion is null";
+			PreparedStatement ps = conexion.prepareStatement(query);
+			ps.setInt(1, codigoSocio);
+
+			ResultSet resultados = ps.executeQuery();
+			return resultados.next();
+		} catch (SQLException e) {
+			throw new BDException(BDException.ERROR_QUERY + e.getMessage());
+		} finally {
+			if (conexion != null) {
+				ConfigSQLLite.cerrarConexion(conexion);
+			}
+		}
+		
 	}
 
 }

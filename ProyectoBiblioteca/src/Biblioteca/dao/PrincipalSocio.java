@@ -7,10 +7,11 @@ import Biblioteca.modelo.Socio;
 import entrada.Teclado;
 import Biblioteca.excepciones.BDException;
 import Biblioteca.excepciones.ExcepcionesLibro;
+import Biblioteca.excepciones.ExcepcionesSocio;
 
 public class PrincipalSocio {
 	
-	public static void main(String[] args) throws BDException, ExcepcionesLibro {
+	public static void main(String[] args) throws BDException, ExcepcionesLibro, ExcepcionesSocio {
 		ArrayList<Socio> socios = null;
 		int opcion;
 		do {
@@ -52,24 +53,17 @@ public class PrincipalSocio {
 
 			case 2:
 				try {
-					
-					int codigo = Teclado.leerEntero("Codigo : ");
-					
-					if(!GestorSocios.validarCodigo(codigo)) {
-						System.out.println("No se ha encontrado codigo");
-					} else {
-					
-					Socio socio = new Socio(codigo);
 
-					GestorSocios.eliminarSocio(socio);
+					int codigo = Teclado.leerEntero("Codigo del socio: ");
+
+					GestorSocios.eliminarSocio(codigo);
 
 					System.out.println("Se ha eliminado un socio de la base de datos.");
-					
-					}
-					
 
-				} catch (BDException e) {
-					throw new BDException(BDException.ERROR_QUERY + e.getMessage());
+				}catch (BDException e) {
+					System.out.println(e.getMessage());
+				}catch(ExcepcionesSocio l) {
+					System.out.println(l.getMessage());
 				}
 				break;
 			case 3:
