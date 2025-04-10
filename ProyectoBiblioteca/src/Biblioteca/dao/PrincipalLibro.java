@@ -31,8 +31,8 @@ public class PrincipalLibro {
 				case 1:
 					try {
 						String isbn = Teclado.leerCadena("ISBN del libro: ");
-						String titulo = Teclado.leerCadena("Titulo del libro");
-						String escritor = Teclado.leerCadena("Escritor del libro");
+						String titulo = Teclado.leerCadena("Titulo del libro: ");
+						String escritor = Teclado.leerCadena("Escritor del libro: ");
 						int añoPublicacion = Teclado.leerEntero("Año de publicacion del libro: ");
 						double puntuacion = Teclado.leerReal("Puntuacion del libro: ");
 						Libro libro  = new Libro(isbn,titulo,escritor,añoPublicacion,puntuacion);
