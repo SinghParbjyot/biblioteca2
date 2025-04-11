@@ -11,8 +11,9 @@ import entrada.Teclado;
 
 public class PrincipalLibro {
 
-	public static void main(String[] args) throws BDException, ExcepcionesLibro {
+	public static void main(String[] args)  {
 		List<Libro> libros;
+		
 		int opcion;
 		do {
 			System.out.println("0. Salir del programa.");
@@ -29,7 +30,7 @@ public class PrincipalLibro {
 					System.out.println("Saliendo del programa...");
 					break;
 				case 1:
-					try {
+				
 						String isbn = Teclado.leerCadena("ISBN del libro: ");
 						String titulo = Teclado.leerCadena("Titulo del libro: ");
 						String escritor = Teclado.leerCadena("Escritor del libro: ");
@@ -38,94 +39,71 @@ public class PrincipalLibro {
 						Libro libro  = new Libro(isbn,titulo,escritor,añoPublicacion,puntuacion);
 
 						GestorLibros.insertarLibro(libro);
-
-						System.out.println("Se ha insertado un libro en la base de datos.");
-
-					}catch (BDException e) {
-						System.out.println(e.getMessage());
-					}
+						
+						System.out.println("Se ha insertado un libro en la base de datos.");				
 					break;
 				case 2:
-					try {
-
 						int codigo = Teclado.leerEntero("Codigo del libro: ");
 
 						GestorLibros.eliminarLibro(codigo);
 
-						System.out.println("Se ha eliminado un libro de la base de datos.");
-
-					}catch (BDException e) {
-						System.out.println(e.getMessage());
-					}catch(ExcepcionesLibro l) {
-						System.out.println(l.getMessage());
-					}
+						System.out.println("Se ha eliminado un libro de la base de datos.");				
 					break;
 				case 3:
 
-					try {
+					
 						libros = GestorLibros.consultarLibros();
 
 						if (libros.size() == 0) {
 							throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_CONSULTAR_LIBROS);
 						} else {
-							for (Libro libro : libros) {
-								System.out.println(libro.toString());
+							for ( Libro li : libros) {
+								System.out.println(li.toString());
 							}
 							System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
 						}
-					} catch (BDException e) {
-						System.out.println(e.getMessage());
-					}
+					
 					break;
 				case 4:
-					try {
+					
 						libros = GestorLibros.consultarLibroPorEscritorOrdenadosPorPuntuacion();
 
 						if(libros.size() == 0) {
 							throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_CONSULTAR_LIBRO_ESCRITOR);
 						}else {
-							for (Libro libro : libros) {
-								System.out.println(libro.toString());
+							for (Libro li : libros) {
+								System.out.println(li.toString());
 							}
 							System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
 						}
-					}catch (BDException e) {
-						System.out.println(e.getMessage());
-					}
+					
 					break;
 				case 5:
-					try {
+					
 						libros = GestorLibros.librosNoPrestados();
 
 						if(libros.size() == 0) {
 							throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_LIBROS_NOPRESTADOS);
 						}else {
-							for (Libro libro : libros) {
-								System.out.println(libro.toString());
+							for ( Libro li : libros) {
+								System.out.println(li.toString());
 							}
 							System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
 						}
-					}catch (ExcepcionesLibro l) {
-						System.out.println(l.getMessage());
-					}
 					break;
 				case 6:
-					try {
-
 						String fechaDevolucion = Teclado.leerCadena("Introduce la fecha de devolucion(YYYY-MM-DD): ");
 						libros = GestorLibros.librosDevueltosFecha(fechaDevolucion);
 
 						if(libros.size() == 0) {
 							throw new ExcepcionesLibro(ExcepcionesLibro.ERROR_LIBROS_NODEVUELTOS);
 						}else {
-							for (Libro libro : libros) {
-								System.out.println(libro.toString());
+							for (Libro l : libros) {
+								System.out.println(l.toString());
 							}
 							System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
 						}
-					}catch (ExcepcionesLibro l) {
-						System.out.println(l.getMessage());
-					}
+					
 					break;
 
 				default:
@@ -133,6 +111,9 @@ public class PrincipalLibro {
 				}
 			}catch(ExcepcionesLibro l) {
 				System.out.println(l.getMessage());
+			}
+			catch (BDException e) {
+				System.out.println(e.getMessage());
 			}
 		}while(opcion !=0);
 	}
