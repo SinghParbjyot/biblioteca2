@@ -17,6 +17,7 @@ public class MegaPrincipal {
 			System.out.println("1. Menú de libros.");
 			System.out.println("2. Menú de socios.");
 			System.out.println("3. Menú de prestamos.");
+			System.out.println("4. Menu opciones extras.");
 			opcion = Teclado.leerEntero("Seleccione una opción: ");
 			try {
 			switch(opcion) {
@@ -31,6 +32,9 @@ public class MegaPrincipal {
 				break;
 			case 3:
 				PrincipalPrestamo.main(args);
+			case 4:
+				Principal.main(args);
+				break;
 			}
 			}catch (BDException e) {
 	            System.err.println("Error de base de datos: " + e.getMessage());
